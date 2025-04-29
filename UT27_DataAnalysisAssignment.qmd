@@ -24,18 +24,28 @@ meninges_select <- meninges %>%
 
 meninges_select <- meninges_select %>%
   rename(
-    `Neutrophil Counts` = `Neutrophil Cells`,
-    `T-Cell Counts` = `T Cell Cells`,
-    `CD8+ T Cell Counts` = `CD8 Cells`,
-    `CD4+ T Cell Counts` = `CD4 Cells`,
-    `B Cell Counts` = `B Cell Cells`
+    `Meninges Neutrophil Counts` = `Neutrophil Cells`,
+    `Meninges T-Cell Counts` = `T Cell Cells`,
+    `Meninges CD8+ T Cell Counts` = `CD8 Cells`,
+    `Meninges CD4+ T Cell Counts` = `CD4 Cells`,
+    `Meninges B Cell Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain Microglia Counts` = `Microglia Counts`,
+    `Brain Neutrophil Counts` = `Neutrophil Counts`,
+    `Brain T-Cell Counts` = `T-Cell Counts`,
+    `Brain CD8+ T Cell Counts` = `CD8+ T Cell Counts`,
+    `Brain CD4+ T Cell Counts` = `CD4+ T Cell Counts`,
+    `Brain B Cell Counts` = `B Cell Counts`
   )
 
 brain_select$`Mouse #` <- paste(brain_select$`Cage #`, brain_select$`Mouse #`, sep = "-")
 meninges_select$`Mouse #` <- paste(meninges_select$`Cage #`, meninges_select$`Mouse #`, sep = "-")
 
 combined_data <- brain_select %>%
-  left_join(meninges_select %>% select(`Mouse #`, `Neutrophil Counts`, `T-Cell Counts`, `CD8+ T Cell Counts`, `CD4+ T Cell Counts`, `B Cell Counts`), by = "Mouse #")
+  left_join(meninges_select %>% select(`Mouse #`, `Meninges Neutrophil Counts`, `Meninges T-Cell Counts`, `Meninges CD8+ T Cell Counts`, `Meninges CD4+ T Cell Counts`, `Meninges B Cell Counts`), by = "Mouse #")
 
 combined_data <- na.omit(combined_data)
 ```
