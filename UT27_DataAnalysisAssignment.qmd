@@ -45,7 +45,35 @@ brain_select$`Mouse #` <- paste(brain_select$`Cage #`, brain_select$`Mouse #`, s
 meninges_select$`Mouse #` <- paste(meninges_select$`Cage #`, meninges_select$`Mouse #`, sep = "-")
 
 combined_data <- brain_select %>%
-  left_join(meninges_select %>% select(`Mouse #`, `Meninges Neutrophil Counts`, `Meninges T-Cell Counts`, `Meninges CD8+ T Cell Counts`, `Meninges CD4+ T Cell Counts`, `Meninges B Cell Counts`), by = "Mouse #")
+  full_join(meninges_select) 
 
 combined_data <- na.omit(combined_data)
+```
+
+Inferential Statistics
+
+```{r}
+#install.packages("MuMIn")
+library("MuMIn")
+options(na.action = "na.fail")
+
+#fit model with all predictors onto Brain CD8 T Cells
+m_brainCD8 <- lm(`Brain CD8+ T Cell Counts` ~ `Meninges Neutrophil Counts` + `Meninges T-Cell Counts` + `Meninges CD8+ T Cell Counts` + `Meninges CD4+ T Cell Counts` + `Meninges B Cell Counts` + `Brain Microglia Counts` + `Brain Neutrophil Counts` + `Brain T-Cell Counts` + `Brain CD4+ T Cell Counts` + `Brain B Cell Counts`, data = combined_data)
+summary(m_brainCD8)
+
+# AICc for Brain CD8+ T Cells
+brainCD8_models <- dredge(m_brainCD8)
+head(coef(brainCD8_models))
+top_brainCD8_models <- subset(brainCD8_models, delta < 4)
+sum(get.models(brainCD8_models, subset = delta <4) |> lengths() > 0)
+
+#Extract best model
+brainCD8_best_model <- get.models(brainCD8_models, 1)[[1]]
+summary(brainCD8_best_model)
+
+top_brainCD8_models_list <- get.models(brainCD8_models, subset = delta < 4)
+
+#averaging of top models
+brainCD8_model_avg <- model.avg(top_brainCD8_models_list)
+summary(brainCD8_model_avg)
 ```
