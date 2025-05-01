@@ -141,61 +141,11 @@ brain_CD8_model <- model_results$full_model
 brain_CD8_model_reduced <- model_results$reduced_model
 ```
 
-old merged code for this section
-
-```{r}
-#install.packages("MuMIn")
-library("MuMIn")
-options(na.action = "na.fail")
-
-#fit model with all predictors onto Brain CD8 T Cells
-m_brainCD8 <- lm(`Brain CD8+ T Cell Counts` ~ `Meninges Neutrophil Counts` + `Meninges T-Cell Counts` + `Meninges CD8+ T Cell Counts` + `Meninges CD4+ T Cell Counts` + `Meninges B Cell Counts` + `Brain Microglia Counts` + `Brain Neutrophil Counts` + `Brain T-Cell Counts` + `Brain CD4+ T Cell Counts` + `Brain B Cell Counts`, data = combined_data)
-summary(m_brainCD8)
-
-# AICc for Brain CD8+ T Cells
-brainCD8_models <- dredge(m_brainCD8)
-head(coef(brainCD8_models))
-top_brainCD8_models_list <- get.models(brainCD8_models, subset = delta < 4)
-
-# Get the importance values as a data frame
-importance_df <- as.data.frame(sw(model.avg(top_brainCD8_models_list)))
-
-# Add predictor names as a column
-importance_df$predictor <- rownames(importance_df)
-
-# Add number of models each predictor appears in
-importance_df$N_models <- sapply(rownames(importance_df), function(var) {
-  sum(sapply(top_brainCD8_models_list, function(m) var %in% names(coef(m))))
-})
-
-# Filter for predictors that appear in all models
-n_models_total <- length(top_brainCD8_models_list)
-predictors_in_all_models <- importance_df$predictor[importance_df$N_models == n_models_total]
-
-# Create formula using only the consistent predictors
-formula_str <- paste("`Brain CD8+ T Cell Counts` ~", paste(predictors_in_all_models, collapse = " + "))
-reduced_formula <- as.formula(formula_str)
-
-reduced_model <- lm(reduced_formula, data = combined_data)
-summary(reduced_model)
-
-```
-
-Evaluate this model
-
-```{r}
-#Determine how well model predicts the reponse
-predicted <- predict(reduced_model)
-actual <- combined_data$`Brain CD8+ T Cell Counts`
-
-plot(actual, predicted,
-     xlab = "Actual", ylab = "Predicted",
-     main = "Observed vs Predicted",
-     pch = 19, col = "steelblue")
-abline(a = 0, b = 1, col = "red", lwd = 2)
-```
-
 Make model table function
+
+Inputs: model
+
+outputs: table of estimates, SE, F, and p
 
 ```{r}
 library(car)
@@ -238,37 +188,11 @@ brainCD8_reduced_table <- make_model_table(brain_CD8_model_reduced)
 
 ```
 
-Make plot with CI function
-
-```{r}
-library(ggplot2)
-
-plot_model_with_ci <- function(model, data, y_var, x_var) {
-  # Create prediction data frame with confidence intervals
-  pred_df <- cbind(
-    data,
-    predict(model, newdata = data, interval = "confidence")
-  )
-
-  # Convert to symbols for tidy evaluation
-  y_sym <- rlang::sym(y_var)
-  x_sym <- rlang::sym(x_var)
-
-  # Plot
-  ggplot(pred_df, aes(x = !!x_sym)) +
-    geom_point(aes(y = !!y_sym), alpha = 0.5) +
-    geom_line(aes(y = fit), color = "blue") +
-    geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "blue", alpha = 0.2) +
-    labs(
-      title = paste("Predicted", y_var, "with 95% Confidence Interval"),
-      x = x_var,
-      y = paste("Predicted", y_var)
-    )
-}
-
-```
-
 Make plot with CI, split by group
+
+Inputs: model, dataframe, y_var, x_var, group_var
+
+outputs: plot of variable and predictor with CI, split by group
 
 ```{r}
 library(ggplot2)
@@ -329,10 +253,10 @@ plot_model_with_ci <- function(model, data, y_var, x_var,
 
 ```
 
-Use this
+Ex. Use this:
 
 ```{r}
-plot_model_with_ci(
+bCD8xmCD8_plot <- plot_model_with_ci(
   model = brain_CD8_model_reduced,
   data = combined_data,
   y_var = "Brain CD8+ T Cell Counts",
