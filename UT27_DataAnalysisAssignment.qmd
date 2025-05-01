@@ -48,9 +48,100 @@ combined_data <- brain_select %>%
   full_join(meninges_select) 
 
 combined_data <- na.omit(combined_data)
+combined_data <- combined_data %>%
+  filter(!(Group %in% c("2-WT-9", "3-3xTg-9", "5-3xTg-18")))
 ```
 
-Inferential Statistics
+Coefficient Heatmap
+
+```{r}
+library(corrplot)
+numeric_data <- combined_data[, sapply(combined_data, is.numeric)]
+corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
+```
+
+Choosing best model function
+
+Inputs: dataframe, variable to model, predictor variables
+
+outputs: original model of data with all predictors, model of data with only best predictors
+
+```{r}
+library(MuMIn)
+
+choose_best_model <- function(data, response_var, predictor_vars) {
+  options(na.action = "na.fail")  # Required for dredge
+  
+  # Build full model formula
+  predictors_str <- paste(predictor_vars, collapse = " + ")
+  formula_str <- paste(response_var, "~", predictors_str)
+  full_formula <- as.formula(formula_str)
+  
+  # Fit full model
+  full_model <- lm(full_formula, data = data)
+  
+  # Model selection using dredge
+  all_models <- dredge(full_model)
+  top_models <- get.models(all_models, subset = delta < 4)
+  
+  # Compute variable importance
+  importance_df <- as.data.frame(sw(model.avg(top_models)))
+  importance_df$predictor <- rownames(importance_df)
+  importance_df$N_models <- sapply(importance_df$predictor, function(var) {
+    sum(sapply(top_models, function(m) var %in% names(coef(m))))
+  })
+  
+  # Find predictors in all top models
+  n_models_total <- length(top_models)
+  predictors_in_all_models <- importance_df$predictor[importance_df$N_models == n_models_total]
+  
+  # If no predictors appear in all models, fall back to those in >50%
+  if (length(predictors_in_all_models) == 0) {
+    predictors_in_all_models <- importance_df$predictor[importance_df$N_models > n_models_total / 2]
+  }
+  
+  # Create reduced model
+  if (length(predictors_in_all_models) > 0) {
+    reduced_formula_str <- paste(response_var, "~", paste(predictors_in_all_models, collapse = " + "))
+    reduced_formula <- as.formula(reduced_formula_str)
+    reduced_model <- lm(reduced_formula, data = data)
+  } else {
+    reduced_model <- NULL
+  }
+  
+  return(list(
+    full_model = full_model,
+    reduced_model = reduced_model,
+    top_predictors = predictors_in_all_models
+  ))
+}
+```
+
+Ex. using this model
+
+```{r}
+response <- "`Brain CD8+ T Cell Counts`"
+predictors <- c(
+  "`Meninges Neutrophil Counts`", "`Meninges T-Cell Counts`",
+  "`Meninges CD8+ T Cell Counts`", "`Meninges CD4+ T Cell Counts`",
+  "`Meninges B Cell Counts`", "`Brain Microglia Counts`",
+  "`Brain Neutrophil Counts`", "`Brain T-Cell Counts`",
+  "`Brain CD4+ T Cell Counts`", "`Brain B Cell Counts`"
+)
+
+model_results <- choose_best_model(combined_data, response, predictors)
+
+# Access outputs:
+summary(model_results$full_model)
+summary(model_results$reduced_model)
+model_results$top_predictors
+
+#Save outputs
+brain_CD8_model <- model_results$full_model
+brain_CD8_model_reduced <- model_results$reduced_model
+```
+
+old merged code for this section
 
 ```{r}
 #install.packages("MuMIn")
@@ -64,16 +155,189 @@ summary(m_brainCD8)
 # AICc for Brain CD8+ T Cells
 brainCD8_models <- dredge(m_brainCD8)
 head(coef(brainCD8_models))
-top_brainCD8_models <- subset(brainCD8_models, delta < 4)
-sum(get.models(brainCD8_models, subset = delta <4) |> lengths() > 0)
-
-#Extract best model
-brainCD8_best_model <- get.models(brainCD8_models, 1)[[1]]
-summary(brainCD8_best_model)
-
 top_brainCD8_models_list <- get.models(brainCD8_models, subset = delta < 4)
 
-#averaging of top models
-brainCD8_model_avg <- model.avg(top_brainCD8_models_list)
-summary(brainCD8_model_avg)
+# Get the importance values as a data frame
+importance_df <- as.data.frame(sw(model.avg(top_brainCD8_models_list)))
+
+# Add predictor names as a column
+importance_df$predictor <- rownames(importance_df)
+
+# Add number of models each predictor appears in
+importance_df$N_models <- sapply(rownames(importance_df), function(var) {
+  sum(sapply(top_brainCD8_models_list, function(m) var %in% names(coef(m))))
+})
+
+# Filter for predictors that appear in all models
+n_models_total <- length(top_brainCD8_models_list)
+predictors_in_all_models <- importance_df$predictor[importance_df$N_models == n_models_total]
+
+# Create formula using only the consistent predictors
+formula_str <- paste("`Brain CD8+ T Cell Counts` ~", paste(predictors_in_all_models, collapse = " + "))
+reduced_formula <- as.formula(formula_str)
+
+reduced_model <- lm(reduced_formula, data = combined_data)
+summary(reduced_model)
+
+```
+
+Evaluate this model
+
+```{r}
+#Determine how well model predicts the reponse
+predicted <- predict(reduced_model)
+actual <- combined_data$`Brain CD8+ T Cell Counts`
+
+plot(actual, predicted,
+     xlab = "Actual", ylab = "Predicted",
+     main = "Observed vs Predicted",
+     pch = 19, col = "steelblue")
+abline(a = 0, b = 1, col = "red", lwd = 2)
+```
+
+Make model table function
+
+```{r}
+library(car)
+library(dplyr)
+
+make_model_table <- function(model) {
+  # Extract model summary
+  model_summary <- summary(model)$coefficients
+  
+  # Convert to data frame and select relevant columns
+  model_df <- as.data.frame(model_summary)[, c("Estimate", "Std. Error", "Pr(>|t|)")]
+  
+  # Run Type II ANOVA using car::Anova
+  anova_table <- Anova(model, type = "II")
+  
+  # Extract F values and match with row names
+  f_values <- anova_table[, "F value"]
+  model_df$F_value <- f_values[match(rownames(model_df), rownames(anova_table))]
+  
+  # Clean and rename columns
+  model_df <- model_df %>%
+    filter(rownames(model_df) != "(Intercept)") %>%
+    rename(
+      SE = `Std. Error`,
+      p = `Pr(>|t|)`,
+      F = F_value
+    )
+  
+  return(model_df)
+}
+```
+
+Ex Use make model table function
+
+```{r}
+#evaluate models
+brainCD8_full_table <- make_model_table(brain_CD8_model)
+brainCD8_reduced_table <- make_model_table(brain_CD8_model_reduced)
+
+
+```
+
+Make plot with CI function
+
+```{r}
+library(ggplot2)
+
+plot_model_with_ci <- function(model, data, y_var, x_var) {
+  # Create prediction data frame with confidence intervals
+  pred_df <- cbind(
+    data,
+    predict(model, newdata = data, interval = "confidence")
+  )
+
+  # Convert to symbols for tidy evaluation
+  y_sym <- rlang::sym(y_var)
+  x_sym <- rlang::sym(x_var)
+
+  # Plot
+  ggplot(pred_df, aes(x = !!x_sym)) +
+    geom_point(aes(y = !!y_sym), alpha = 0.5) +
+    geom_line(aes(y = fit), color = "blue") +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "blue", alpha = 0.2) +
+    labs(
+      title = paste("Predicted", y_var, "with 95% Confidence Interval"),
+      x = x_var,
+      y = paste("Predicted", y_var)
+    )
+}
+
+```
+
+Make plot with CI, split by group
+
+```{r}
+library(ggplot2)
+library(rlang)
+
+plot_model_with_ci <- function(model, data, y_var, x_var,
+                                      group_var = NULL,
+                                      x_label = NULL,
+                                      y_label = NULL,
+                                      color_vals = NULL,
+                                      color_labels = NULL) {
+  
+  # Predict with confidence intervals
+  preds <- predict(model, newdata = data, se.fit = TRUE)
+  z_val <- 1.96
+  data$fit <- preds$fit
+  data$se_fit <- preds$se.fit
+  data$lower_CI <- data$fit - z_val * data$se_fit
+  data$upper_CI <- data$fit + z_val * preds$se.fit
+
+  # Sort data to help smoothness if needed
+  data <- data[order(data[[x_var]]), ]
+
+  # Tidy variable references
+  x_sym <- sym(x_var)
+  group_sym <- if (!is.null(group_var)) sym(group_var) else NULL
+
+  # Base plot
+  p <- ggplot(data, aes(x = !!x_sym, y = fit))
+
+  # Add smoothed line and confidence ribbon only
+  if (!is.null(group_var)) {
+    p <- p +
+      geom_smooth(aes(color = !!group_sym, fill = !!group_sym), method = "lm", se = TRUE, formula = y ~ x)
+
+    if (!is.null(color_vals)) {
+      p <- p +
+        scale_color_manual(values = color_vals, labels = color_labels) +
+        scale_fill_manual(values = color_vals, labels = color_labels)
+    }
+  } else {
+    p <- p +
+      geom_smooth(method = "lm", se = TRUE, formula = y ~ x, color = "blue", fill = "blue", alpha = 0.2)
+  }
+
+  # Add labels and theme
+  p <- p +
+    labs(
+      x = ifelse(is.null(x_label), x_var, x_label),
+      y = ifelse(is.null(y_label), paste("Predicted", y_var), y_label),
+      color = ifelse(!is.null(group_var), group_var, NULL),
+      fill = ifelse(!is.null(group_var), group_var, NULL)
+    ) +
+    theme_minimal()
+
+  return(p)
+}
+
+```
+
+Use this
+
+```{r}
+plot_model_with_ci(
+  model = brain_CD8_model_reduced,
+  data = combined_data,
+  y_var = "Brain CD8+ T Cell Counts",
+  x_var = "Meninges CD8+ T Cell Counts",
+  group_var = "Group"
+)
+
 ```
