@@ -10,7 +10,7 @@
 #' @param predictor_vars Predictor variables.
 #' @export
 #' @examples
-#' choose_best_model(combined_data, response, predictors)
+#' choose_best_model <- function(data, response_var, predictor_vars)
 
 #Packages needed: MuMIn
 

@@ -17,3 +17,120 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(bim)
 ```
+
+## Read in dataframes and data wrangling
+
+```{r}
+library(readr)
+library(dplyr)
+library(skimr)
+
+data("UT27_Meninges_Output_Data")
+meninges <- UT27_Meninges_Output_Data
+
+data("UT27_Brain_Output_Data")
+brain <- UT27_Brain_Output_Data
+
+brain_select <- brain %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Microglia Counts`, `Neutrophil Counts`, `T-Cell Counts`, `CD8+ T Cell Counts`, `CD4+ T Cell Counts`, `B Cell Counts`)
+
+meninges_select <- meninges %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Neutrophil Cells`, `T Cell Cells`, `CD8 Cells`, `CD4 Cells`, `B Cell Cells`)
+
+meninges_select <- meninges_select %>%
+  rename(
+    `Meninges Neutrophil Counts` = `Neutrophil Cells`,
+    `Meninges T-Cell Counts` = `T Cell Cells`,
+    `Meninges CD8+ T Cell Counts` = `CD8 Cells`,
+    `Meninges CD4+ T Cell Counts` = `CD4 Cells`,
+    `Meninges B Cell Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain Microglia Counts` = `Microglia Counts`,
+    `Brain Neutrophil Counts` = `Neutrophil Counts`,
+    `Brain T-Cell Counts` = `T-Cell Counts`,
+    `Brain CD8+ T Cell Counts` = `CD8+ T Cell Counts`,
+    `Brain CD4+ T Cell Counts` = `CD4+ T Cell Counts`,
+    `Brain B Cell Counts` = `B Cell Counts`
+  )
+
+brain_select$`Mouse #` <- paste(brain_select$`Cage #`, brain_select$`Mouse #`, sep = "-")
+meninges_select$`Mouse #` <- paste(meninges_select$`Cage #`, meninges_select$`Mouse #`, sep = "-")
+
+combined_data <- brain_select %>%
+  full_join(meninges_select) 
+
+combined_data <- na.omit(combined_data)
+combined_data <- combined_data %>%
+  filter(!(Group %in% c("2-WT-9", "3-3xTg-9", "5-3xTg-18")))
+```
+
+Coefficient Heatmap
+
+```{r}
+library(corrplot)
+numeric_data <- combined_data[, sapply(combined_data, is.numeric)]
+corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
+```
+
+# choose_best_model
+
+Ex. using this model
+
+```{r}
+library(MuMIn)
+
+response <- "`Brain CD8+ T Cell Counts`"
+predictors <- c(
+  "`Meninges Neutrophil Counts`", "`Meninges T-Cell Counts`",
+  "`Meninges CD8+ T Cell Counts`", "`Meninges CD4+ T Cell Counts`",
+  "`Meninges B Cell Counts`", "`Brain Microglia Counts`",
+  "`Brain Neutrophil Counts`", "`Brain T-Cell Counts`",
+  "`Brain CD4+ T Cell Counts`", "`Brain B Cell Counts`"
+)
+
+model_results <- choose_best_model(combined_data, response, predictors)
+
+# Access outputs:
+summary(model_results$full_model)
+summary(model_results$reduced_model)
+model_results$top_predictors
+
+#Save outputs
+brain_CD8_model <- model_results$full_model
+brain_CD8_model_reduced <- model_results$reduced_model
+```
+
+
+# make_model_table 
+
+Ex Use make model table function
+
+```{r}
+library(car)
+
+#evaluate models
+brainCD8_full_table <- make_model_table(brain_CD8_model)
+brainCD8_reduced_table <- make_model_table(brain_CD8_model_reduced)
+
+```
+
+
+# plot_model_with_ci
+
+Ex. Use this:
+
+```{r}
+library(ggplot2)
+
+bCD8xmCD8_plot <- plot_model_with_ci(
+  model = brain_CD8_model_reduced,
+  data = combined_data,
+  y_var = "Brain CD8+ T Cell Counts",
+  x_var = "Meninges CD8+ T Cell Counts",
+  group_var = "Group"
+)
+
+```
