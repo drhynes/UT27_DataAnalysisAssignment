@@ -24,3 +24,6 @@ Gives original model of data with all predictors, model of data with only best p
 choose_best_model(combined_data, response, predictors)
 choose_best_model <- function(data, response_var, predictor_vars)
 }
+\seealso{
+\link{vignette("bim")}
+}

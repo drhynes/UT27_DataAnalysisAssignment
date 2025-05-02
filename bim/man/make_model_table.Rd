@@ -15,3 +15,6 @@ Table of Estimate, SE, F, and p for the given model
 \examples{
 make_model_table(brain_CD8_model)
 }
+\seealso{
+\link{vignette("bim")}
+}

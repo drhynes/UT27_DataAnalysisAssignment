@@ -11,6 +11,7 @@
 #' @param x_var
 #' @param group_var
 #' @export
+#' @seealso \link{vignette("bim")}
 #' @examples
 #' plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
 #Packages needed: ggplot2, car

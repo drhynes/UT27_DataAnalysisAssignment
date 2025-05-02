@@ -9,6 +9,7 @@
 #' @param response_var Variable to model.
 #' @param predictor_vars Predictor variables.
 #' @export
+#' @seealso \link{vignette("bim")}
 #' @examples
 #' choose_best_model <- function(data, response_var, predictor_vars)
 

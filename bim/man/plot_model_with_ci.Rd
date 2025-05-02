@@ -27,3 +27,6 @@ Plot of variable and predictor with CI, split by group
 \examples{
 plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
 }
+\seealso{
+\link{vignette("bim")}
+}
