@@ -49,7 +49,6 @@ p <- graph_boxplots(
   facet_variable = "Sex",
   add_points = TRUE
 )
-
 }
 \keyword{boxplot}
 \keyword{plotting}
