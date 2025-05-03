@@ -19,6 +19,12 @@ plot_model_with_ci(
 \arguments{
 \item{model}{A statistical model of data.}
 
+\item{y_var}{A string specifying the name of the outcome variable.}
+
+\item{x_var}{A string specifying the name of the predictor variable.}
+
+\item{group_var}{A string specifying the name of the grouping variable to split lines by.}
+
 \item{dataframe}{A data frame containing the variables.}
 }
 \description{

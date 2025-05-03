@@ -7,9 +7,9 @@
 #' @description Plot of variable and predictor with CI, split by group
 #' @param model A statistical model of data.
 #' @param dataframe A data frame containing the variables.
-#' @param y_var
-#' @param x_var
-#' @param group_var
+#' @param y_var A string specifying the name of the outcome variable.
+#' @param x_var A string specifying the name of the predictor variable.
+#' @param group_var A string specifying the name of the grouping variable to split lines by.
 #' @export
 #' @seealso \link{vignette("bim")}
 #' @examples
