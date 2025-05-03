@@ -1,0 +1,268 @@
+---
+title: "Functions - Stephen"
+format: html
+editor: visual
+---
+
+## Windowed Data - DREW
+
+```{r}
+library(tidyverse)
+library(ggprism)
+```
+
+```{r}
+# loading in .csv files for brain and meninges 
+m <- "UT27_Meninges_Output_Data.csv"
+meninges <- read_csv(m, col_names = TRUE)
+b <- "UT27_Brain_Output_Data.csv"
+brain <- read_csv(b,col_names = TRUE)
+
+# selecting the variables we will be working with for brain and meninges 
+brain_select <- brain %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Microglia Counts`, `Neutrophil Counts`, `T-Cell Counts`, `CD8+ T Cell Counts`, `CD4+ T Cell Counts`, `B Cell Counts`)
+
+meninges_select <- meninges %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Neutrophil Cells`, `T Cell Cells`, `CD8 Cells`, `CD4 Cells`, `B Cell Cells`)
+
+# renaming variables for brain and meninges 
+meninges_select <- meninges_select %>%
+  rename(
+    `Meninges Neutrophil_Counts` = `Neutrophil Cells`,
+    `Meninges T Cell Counts` = `T Cell Cells`,
+    `Meninges CD8+ T Cell Counts` = `CD8 Cells`,
+    `Meninges CD4+ T Cell Counts` = `CD4 Cells`,
+    `Meninges B Cell Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain_Microglia_Counts` = `Microglia Counts`,
+    `Brain_Neutrophil_Counts` = `Neutrophil Counts`,
+    `Brain_T_Cell_Counts` = `T-Cell Counts`,
+    `Brain_CD8+_T_Cell_Counts` = `CD8+ T Cell Counts`,
+    `Brain_CD4+_T_Cell_Counts` = `CD4+ T Cell Counts`,
+    `Brain_B_Cell_Counts` = `B Cell Counts`
+  )
+
+#creating a new variable that contains the cage number and the mouse number 
+brain_select$`Mouse #` <- paste(brain_select$`Cage #`, brain_select$`Mouse #`, sep = "-")
+meninges_select$`Mouse #` <- paste(meninges_select$`Cage #`, meninges_select$`Mouse #`, sep = "-")
+
+# combining all the data into one data file 
+combined_data <- brain_select %>%
+  full_join(meninges_select)
+
+# omitting any blank data 
+combined_data <- na.omit(combined_data)
+
+combined_data
+
+```
+
+\
+This is something I did differently from Drew's original windowing \
+I added "\_" to the names to make them easier to work with.
+
+THIS IS GOING TO GIVE AN ERROR IF YOU RUN THE QUARTO - THE FUNCTIONS SHOULD STILL WORK. You might just need to change the names of the variables when you use the function, if that makes sense. They are set up to take strings "text" or character vectors (c("text", "text").
+
+```{r}
+
+
+# renaming variables for brain and meninges 
+meninges_select <- meninges_select %>%
+  rename(
+    `Meninges_Neutrophil_Counts` = `Neutrophil Cells`,
+    `Meninges_T-Cell_Counts` = `T Cell Cells`,
+    `Meninges_CD8+_T-Cell_Counts` = `CD8 Cells`,
+    `Meninges_CD4+_T-Cell_Counts` = `CD4 Cells`,
+    `Meninges_B_Cell_Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain_Microglia_Counts` = `Microglia Counts`,
+    `Brain_Neutrophil_Counts` = `Neutrophil Counts`,
+    `Brain_T_Cell_Counts` = `T-Cell Counts`,
+    `Brain_CD8+_T_Cell_Counts` = `CD8+ T Cell Counts`,
+    `Brain_CD4+_T_Cell_Counts` = `CD4+ T Cell Counts`,
+    `Brain_B_Cell_Counts` = `B Cell Counts`
+  )
+```
+
+## Windowed Data - STEPHEN
+
+This is the extra windowing I did
+
+```{r}
+#I made a new data set that breaks down the group into seperate variables (Genotype, Age, and Age Class)
+# Also ZT needs to be a factor
+combined_data2 <- combined_data |> 
+  mutate(ZT  = as.factor(ZT),
+         Genotype = case_when(grepl("WT", Group, ignore.case = TRUE) ~ "WT", 
+                              grepl("3xTg", Group, ignore.case = TRUE) ~ "3xTg"), 
+         Age = str_extract(Group, "(?<=-)[0-9]+$"), #(?<=-) look after a dash ; [0-9]+ matches the numbers after ; $ to look at the end of the string
+         Age_Class = case_when(
+           Age == 6 ~ "Adult",
+           Age == 9 ~ "Middle Aged", 
+           Age == 18 ~ "Aged")) |>
+  relocate(Genotype, Age,  Age_Class, .after = Group) |>
+  filter(Age_Class %in% c("Adult", "Aged"), 
+         Genotype == "WT")
+```
+
+## OUTLIER FUNCTION
+
+```{r}
+check_for_outliers <- function(data, group_variables, cell_variables, outlier_condition = 1.5) {
+  outlier_data <- data |> #creating a data frame that is going to check if there is a outlier and add a column that says TRUE or FALSE for each numerical variable given
+    group_by(across(all_of(group_variables))) |> # first groups by categorical variables; across() - applies to all columns listed ; all_of() - turns the character string list into the column names
+    mutate( #creating a new column
+      across( #across() - applies to all columns listed
+      .cols = all_of(cell_variables), #grabbing all the numerical variables
+      .fns = ~ (. < quantile(., 0.25, na.rm = TRUE) - outlier_condition * IQR(., na.rm = TRUE)) | (. > quantile(., 0.75, na.rm = TRUE) + outlier_condition * IQR(., na.rm = TRUE)), # outlier test being applied to each column listed
+      .names = "{.col}_outliers")) #creating the new column to show it's an outlier or not
+
+  outlier_columns <- paste0(cell_variables, "_outliers") # you need to rewrite columns otherwise it won't let you filter them later
+
+  ordered_cell_columns <- as.vector(rbind(cell_variables, outlier_columns)) # this allows for a new outlier_column to be next to the original variable
+
+  categorical_variables <- names(select(data, where(~ is.factor(.) || is.character(.)))) # keeps all the categorical variables to know all of the information about these outliers
+
+  # this creates a new data frame that shows only the outliers
+  outlier_data |> # data frame that was created above
+    filter(if_any(all_of(outlier_columns), ~ .)) |> # keeps only rows where outliers are present
+    select(all_of(categorical_variables), all_of(ordered_cell_columns))  # keeps only the categorical variables, cell variables, and the new outlier columns
+}
+```
+
+## OUTLIER FUNCTION EXAMPLE
+
+should output a rows that contain outliers
+
+```{r}
+outlier_check_example <- check_for_outliers(data = combined_data2, 
+                          group_variables = c("Sex","ZT", "Age_Class", "Genotype"), 
+                          cell_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts","Brain_Neutrophil_Counts" ))
+
+outlier_check_example
+```
+
+## BOXPLOT FUNCTION
+
+```{r}
+graph_boxplots <- function(data, x_variable, y_variables, fill_variable = NULL, facet_variable = NULL, add_points = TRUE, coef = 1.5) {
+
+  plots <- list() # This stores the plots in a list
+
+  for (y in y_variables) { # loops through the list of variables given
+  y_label <- str_to_title(str_replace_all(y, "_", " ")) # cleans the up the y-variables for a title
+  x_label <- str_to_title(str_replace_all(x_variable, "_", " ")) # cleans the up the x-variable for a title
+  legend_title <- str_to_title(str_replace_all(fill_variable, "_", " ")) # Cleans the fill_variable for a figure legend title
+
+  # this if and else statement for when you do have or don't have a fill_variable()
+  if (!is.null(fill_variable)) { # only does this block of code if the fill_variable() is given
+    plot_aes <- aes( # it will plot these aesthetics
+      x = .data[[x_variable]], # X variable ; .data is a place holder for the data frame and [[]] gets a specific column
+      y = .data[[y]], # y variable
+      fill = .data[[fill_variable]], # fill_variable for the boxplots
+      color = .data[[fill_variable]]) # fill_variable for the points
+  }
+
+  else { # only does this block of code if the fill_variable() is NOT given
+    plot_aes <- aes(x = .data[[x_variable]],
+                    y = .data[[y]])
+  }
+
+  # This creates the actual boxplot
+  p <- ggplot(data, plot_aes) + # uses your data frame and plot aesthetics from above depending on if there is  fill_variable or not
+    geom_boxplot(outlier.shape = NA, #creates boxplot and stops adding the identical black outliers
+                 color = "black", # oulines the boxplot in black
+                 coef = coef) +  # aplplies what the length of whiskers will be
+    labs(title = str_to_title(y_label), #plot title
+         x = x_label, # x-variable title
+         y = y_label) + # y-variable title
+    guides(color = "none") # helps to remove the extra legend it was creating
+
+  # this if statement is for when you want or do not want to add points to graph
+  if (add_points) {
+    # this if and else statement is for when you have fill_variable ;
+    # this if adds points if there is a fill_variable
+    if (!is.null(fill_variable)) {
+      p <- p + geom_point(position = position_jitterdodge(jitter.width = 0.05, dodge.width = 0.7), shape = 21, color = "black" )
+    }
+
+    # this adds plain points if no fill_variable is given
+    else {
+      p <- p + geom_point(position = position_jitter(width = 0.05, height = 0))
+    }
+  }
+
+  # this if statement is for when you want to facet wrap by a specific variable
+  if (!is.null(facet_variable)) {
+    p <- p + facet_wrap(vars(.data[[facet_variable]])) #vars lets you pass the variable to facet_wrap()
+  }
+
+  # This is saving the plot to the plots list
+  plots[[y]] <- p
+  }
+
+# this returns back the list of plots that were created
+return(plots)
+}
+
+
+```
+
+## BOXPLOT FUNCTION EXAMPLE
+
+should output multiple graphs if you gave it multiple y variables
+
+```{r}
+boxplot_example <- graph_boxplots(
+  data = combined_data2, x_variable = "Age_Class", 
+  y_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts", "Brain_Neutrophil_Counts"), 
+  fill_variable = "ZT", 
+  facet_variable = "Sex", 
+  add_points = TRUE)
+
+boxplot_example
+```
+
+## DESCRIPTIVE STATS FUNCTION
+
+```{r}
+descriptive_data <- function(data, group_variables, cell_variables, stats = c("n", "median", "q1", "q3", "mean", "sd", "sem")) {
+  
+  stats_formulas <- list( # ~ is needed to create a temporary function ; .x is just a place holder for the column that is being summarized
+    n = ~sum(!is.na(.x)), # counts the number of subjects per group and does not count NAs
+    median = ~median(.x, na.rm = TRUE), # calculates the median
+    q1 = ~quantile(.x, 0.25, na.rm = TRUE), # calculates the 25th percentile
+    q3 = ~quantile(.x, 0.75, na.rm = TRUE),# calculates the 75th percentile
+    mean = ~mean(.x, na.rm = TRUE), # calculates the mean
+    sd = ~sd(.x, na.rm = TRUE), # calculates the standard deviation
+    sem = ~sd(.x, na.rm = TRUE) / sqrt(sum(!is.na(.x)))) # calculates the standard error of the mean
+  
+  selected_formulas <- stats_formulas[stats] # this helps apply each of the stats that were selected or all of them if no selection was made below
+  
+  data |> # data table
+    group_by(across(all_of(group_variables))) |> # first groups by categorical vaeriables; across() - applies to all columns listed ; all_of() - turns the character string list into column names
+    summarise(across( #across() - apply to all columns listed
+      all_of(cell_variables), #all_of() - turns the character string list into the column names
+      .fns = selected_formulas, # Applies the selected list of formulas
+      .names = "{.col}_{.fn}")) # creates a new column with the name of the variable and what summary statistics was done
+}
+```
+
+## DESCRIPTIVE STATS FUNCTION EXAMPLE
+
+should output a table with median q1 q3 mean sd and sem for each group
+
+```{r}
+descriptive_stats_example <- descriptive_data(data = combined_data2, 
+                          group_variables = c("Sex","ZT", "Age_Class", "Genotype"), 
+                          cell_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts","Brain_Neutrophil_Counts" ))
+
+descriptive_stats_example
+
+```

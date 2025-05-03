@@ -22,20 +22,20 @@
 #' @export
 
 check_for_outliers <- function(data, group_variables, cell_variables, outlier_condition = 1.5) {
-  outlier_data <- data |> #creating a data frame that is going to check is there is a outlier and add a column that says TRUE or FALSE for each numerical variables given
+  outlier_data <- data |> #creating a data frame that is going to check if there is a outlier and add a column that says TRUE or FALSE for each numerical variable given
     group_by(across(all_of(group_variables))) |> # first groups by categorical variables; across() - applies to all columns listed ; all_of() - turns the character string list into the column names
     mutate( #creating a new column
       across( #across() - applies to all columns listed
-      .cols = all_of(cell_variables), #grabbing all the numerical variables
-      .fns = ~ (. < quantile(., 0.25, na.rm = TRUE) - outlier_condition * IQR(., na.rm = TRUE)) | (. > quantile(., 0.75, na.rm = TRUE) + outlier_condition * IQR(., na.rm = TRUE)), # outlier test being applied to each column listed
-      .names = "{.col}_outliers")) #creating the new column to show its an outlier or not
-
-  outlier_columns <- paste0(cell_variables, "_outliers") # you need to rewrite columns otherwise it wont let you filter them later
-
-  ordered_cell_columns <- as.vector(rbind(cell_variables, outlier_columns)) # this allows for new outlier_column to be next to the original variable
-
+        .cols = all_of(cell_variables), #grabbing all the numerical variables
+        .fns = ~ (. < quantile(., 0.25, na.rm = TRUE) - outlier_condition * IQR(., na.rm = TRUE)) | (. > quantile(., 0.75, na.rm = TRUE) + outlier_condition * IQR(., na.rm = TRUE)), # outlier test being applied to each column listed
+        .names = "{.col}_outliers")) #creating the new column to show it's an outlier or not
+  
+  outlier_columns <- paste0(cell_variables, "_outliers") # you need to rewrite columns otherwise it won't let you filter them later
+  
+  ordered_cell_columns <- as.vector(rbind(cell_variables, outlier_columns)) # this allows for a new outlier_column to be next to the original variable
+  
   categorical_variables <- names(select(data, where(~ is.factor(.) || is.character(.)))) # keeps all the categorical variables to know all of the information about these outliers
-
+  
   # this creates a new data frame that shows only the outliers
   outlier_data |> # data frame that was created above
     filter(if_any(all_of(outlier_columns), ~ .)) |> # keeps only rows where outliers are present
