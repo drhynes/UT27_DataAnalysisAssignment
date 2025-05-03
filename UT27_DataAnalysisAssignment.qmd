@@ -265,3 +265,33 @@ bCD8xmCD8_plot <- plot_model_with_ci(
 )
 
 ```
+
+Export Figures
+
+```{r}
+knitr::kable(brainCD8_full_table, caption = "Full Model: Brain CD8+ T Cell Counts")
+knitr::kable(brainCD8_reduced_table, caption = "Reduced Model: Brain CD8+ T Cell Counts")
+bCD8xmCD8_plot
+
+# Load required packages
+library(gridExtra)
+library(grid)
+
+# Convert data frame to table grob
+table1_grob <- tableGrob(brainCD8_full_table)
+table2_grob <- tableGrob(brainCD8_reduced_table)
+
+# Save the full table as PNG
+png("brainCD8_full_table.png", width = 1000, height = 600)
+grid.draw(table1_grob)
+dev.off()
+
+# Save the reduced table as PNG
+png("brainCD8_reduced_table.png", width = 1000, height = 600)
+grid.draw(table2_grob)
+dev.off()
+
+# Save as PNG
+ggplot2::ggsave("bCD8xmCD8_plot.png", plot = bCD8xmCD8_plot, width = 6, height = 4, dpi = 300)
+
+```
