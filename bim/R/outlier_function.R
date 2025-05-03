@@ -18,6 +18,7 @@
 #'   cell_variables = c("T_Cells", "B_Cells"),
 #'   outlier_condition = 1.5
 #' )
+#' @import dplyr
 #' @export
 
 check_for_outliers <- function(data, group_variables, cell_variables, outlier_condition = 1.5) {

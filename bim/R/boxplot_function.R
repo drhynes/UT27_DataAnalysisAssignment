@@ -25,7 +25,7 @@
 #'   facet_variable = "Sex",
 #'   add_points = TRUE
 #' )
-#'
+#'@import ggplot2 stringr
 #' @export
 
 graph_boxplots <- function(data, x_variable, y_variables, fill_variable = NULL, facet_variable = NULL, add_points = TRUE, coef = 1.5) {

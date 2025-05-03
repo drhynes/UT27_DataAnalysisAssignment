@@ -17,6 +17,7 @@
 #'   cell_variables = c("T_Cells", "B_Cells", "Microglia"),
 #'   stats = c("n", "mean", "sd")
 #' )
+#' @import dplyr
 #' @export
 
 descriptive_data <- function(data, group_variables, cell_variables, stats = c("n", "median", "q1", "q3", "mean", "sd", "sem")) {
