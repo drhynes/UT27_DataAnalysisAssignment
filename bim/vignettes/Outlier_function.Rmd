@@ -46,8 +46,8 @@ meninges_select <- meninges_s %>%
   rename(
     `Meninges_Neutrophil_Counts` = `Neutrophil Cells`,
     `Meninges_T_Cell_Counts` = `T Cell Cells`,
-    `Meninges_CD8+_T-Cell_Counts` = `CD8 Cells`,
-    `Meninges_CD4+_T-Cell_Counts` = `CD4 Cells`,
+    `Meninges_CD8+_T_Cell_Counts` = `CD8 Cells`,
+    `Meninges_CD4+_T_Cell_Counts` = `CD4 Cells`,
     `Meninges_B_Cell_Counts` = `B Cell Cells`
   )
 
@@ -97,14 +97,14 @@ knitr::kable(combined_data2)
 ## OUTLIER FUNCTION EXAMPLE
 This function is set up to to take strings "text" or character vectors (c("text", "text"). This is helpful if spaces are used in the variables names. 
 
-This function creates a table that identifies outliers in the numerical (cell) variables that are provided (e.g., "Brain_T_Cell_Counts", "Brain_Microglia_Counts", "Brain_Neutrophil_Counts"), which can also be grouped by one or more categorical (grouping) variables (e.g.,"Sex","ZT", "Age_Class", "Genotype"). It will then create a new column next to each numerical (cell) variable provided, indicating whether the value is an outlier (e.g., TRUE = outlier, FALSE = not an outlier). There is an option to adjust the outlier condition, meaning you can be more or less conservative when testing for outliers (e.g., 1.5 * IQR is the default). You can then decide if that subject should be removed or not. 
+This function creates a table that identifies outliers in the numerical (cell) variables that are provided (e.g., "Brain_T_Cell_Counts", "Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"), which can also be grouped by one or more categorical (grouping) variables (e.g.,"Sex","ZT", "Age_Class", "Genotype"). It will then create a new column next to each numerical (cell) variable provided, indicating whether the value is an outlier (e.g., TRUE = outlier, FALSE = not an outlier). There is an option to adjust the outlier condition, meaning you can be more or less conservative when testing for outliers (e.g., 1.5 * IQR is the default). You can then decide if that subject should be removed or not. 
 
 ```{r}
 outlier_check_example <- check_for_outliers(
   data = combined_data2,  # data frame
   group_variables = c("Sex","ZT", "Age_Class", "Genotype"), #categorical group variables
-  cell_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts","Brain_Neutrophil_Counts"), # numerical cell variable
-  outlier_condition = 1.5) # condition to test for outlier 
+  cell_variables = c("Brain_T_Cell_Counts", "Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"), # numerical cell variable
+  outlier_condition = 1.5) # condition to test for outliers
 
 knitr::kable(outlier_check_example)
 ```

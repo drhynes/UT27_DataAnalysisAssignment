@@ -46,8 +46,8 @@ meninges_select <- meninges_s %>%
   rename(
     `Meninges_Neutrophil_Counts` = `Neutrophil Cells`,
     `Meninges_T_Cell_Counts` = `T Cell Cells`,
-    `Meninges_CD8+_T-Cell_Counts` = `CD8 Cells`,
-    `Meninges_CD4+_T-Cell_Counts` = `CD4 Cells`,
+    `Meninges_CD8+_T_Cell_Counts` = `CD8 Cells`,
+    `Meninges_CD4+_T_Cell_Counts` = `CD4 Cells`,
     `Meninges_B_Cell_Counts` = `B Cell Cells`
   )
 
@@ -99,13 +99,13 @@ knitr::kable(combined_data2)
 ## BOXPLOT FUNCTION EXAMPLE
 This function is set up to to take strings "text" or character vectors (c("text", "text"). This is helpful if spaces are used in the variables names. 
 
-This function creates a boxplot for each of the numerical (cell) y-variables that are provided (e.g., "Brain_T_Cell_Counts", "Brain_Microglia_Counts", "Brain_Neutrophil_Counts"). These (cell) y-variables are plotted against a single categorical (group) x-variable (e.g., "Age_Class"). There is an option to choose a fill variable to separate and color the boxplots (e.g., by "Genotype") and a facet variable to separate the plots into panels (e.g., by "Sex"). There are also options to add individual data points (e.g. TRUE adds points) and to adjust the whiskers (e.g., 1.5 * IQR is the default). 
+This function creates a boxplot for each of the numerical (cell) y-variables that are provided (e.g., "Brain_T_Cell_Counts", "Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"). These (cell) y-variables are plotted against a single categorical (group) x-variable (e.g., "Age_Class"). There is an option to choose a fill variable to separate and color the boxplots (e.g., by "Genotype") and a facet variable to separate the plots into panels (e.g., by "Sex"). There are also options to add individual data points (e.g. TRUE adds points) and to adjust the whiskers (e.g., 1.5 * IQR is the default). 
 
 ```{r}
 boxplot_example <- graph_boxplots(
   data = combined_data2, # data 
   x_variable = "Age_Class", # categorical (group) variable
-  y_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts", "Brain_Neutrophil_Counts"), # numerical (cell) variables
+  y_variables = c("Brain_T_Cell_Counts", "Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"), # numerical (cell) variables
   fill_variable = "ZT",  # fill variable
   facet_variable = "Sex", # facet variable
   add_points = TRUE, # add points 

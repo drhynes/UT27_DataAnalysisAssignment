@@ -47,8 +47,8 @@ meninges_select <- meninges_s %>%
   rename(
     `Meninges_Neutrophil_Counts` = `Neutrophil Cells`,
     `Meninges_T_Cell_Counts` = `T Cell Cells`,
-    `Meninges_CD8+_T-Cell_Counts` = `CD8 Cells`,
-    `Meninges_CD4+_T-Cell_Counts` = `CD4 Cells`,
+    `Meninges_CD8+_T_Cell_Counts` = `CD8 Cells`,
+    `Meninges_CD4+_T_Cell_Counts` = `CD4 Cells`,
     `Meninges_B_Cell_Counts` = `B Cell Cells`
   )
 
@@ -99,13 +99,13 @@ knitr::kable(combined_data2)
 ## DESCRIPTIVE STATS FUNCTION EXAMPLE 
 This function is set up to to take strings "text" or character vectors (c("text", "text"). This is helpful if spaces are used in the variables names. 
 
-This function creates a table containing the categorical (group) variables that are provided (e.g.,"Sex","ZT", "Age_Class", "Genotype"). These variables should represent the groups that are going to be compared. It will then create new columns containing the descriptive stats that were chosen or default to all of them (e.g. n, median, q1, q3, mean, SD, and SEM) for each numerical (cell) variables that was provided (e.g., "Brain_T_Cell_Counts", "Brain_Microglia_Counts","Brain_Neutrophil_Counts"). 
+This function creates a table containing the categorical (group) variables that are provided (e.g.,"Sex","ZT", "Age_Class", "Genotype"). These variables should represent the groups that are going to be compared. It will then create new columns containing the descriptive stats that were chosen or default to all of them (e.g. n, median, q1, q3, mean, SD, and SEM) for each numerical (cell) variables that was provided (e.g., "Brain_T_Cell_Counts", "Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"). 
 
 ```{r}
 descriptive_stats_example <- descriptive_data(
   data = combined_data2, # data frame
   group_variables = c("Sex","ZT", "Age_Class", "Genotype"),  #categorical group variables
-  cell_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts","Brain_Neutrophil_Counts"), # numerical cell variables
+  cell_variables = c("Brain_T_Cell_Counts","Brain_CD8+_T_Cell_Counts", "Meninges_CD8+_T_Cell_Counts"), # numerical cell variables
   stats= c("n", "median", "q1", "q3", "mean", "sd", "sem")) # descriptive stats
 
 knitr::kable(descriptive_stats_example)
