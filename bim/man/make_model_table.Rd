@@ -16,5 +16,5 @@ Table of Estimate, SE, F, and p for the given model
 make_model_table(brain_CD8_model)
 }
 \seealso{
-\link{vignette("bim")}
+\link{vignette("Make_model_table", package = "bim")}
 }

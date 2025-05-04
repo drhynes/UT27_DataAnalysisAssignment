@@ -25,7 +25,7 @@
 #'   facet_variable = "Sex",
 #'   add_points = TRUE
 #' )
-#' @seealso \link{vignette("Boxplot_function", package = "bim")}
+#' @seealso [Vignette: Boxplot_function](../doc/Boxplot_function.html)
 #' @import ggplot2 stringr
 #' @export
 

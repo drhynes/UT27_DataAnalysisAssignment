@@ -36,6 +36,9 @@ descriptive_data(
   stats = c("n", "mean", "sd")
 )
 }
+\seealso{
+\link{vignette("Descriptive_stats_function", package = "bim")}
+}
 \keyword{descriptive}
 \keyword{statistics}
 \keyword{summary}

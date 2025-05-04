@@ -37,4 +37,7 @@ check_for_outliers(
   outlier_condition = 1.5
 )
 }
+\seealso{
+\link{vignette("Outlier_function", package = "bim")}
+}
 \keyword{outliers}

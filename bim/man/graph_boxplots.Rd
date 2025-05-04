@@ -50,6 +50,9 @@ p <- graph_boxplots(
   add_points = TRUE
 )
 }
+\seealso{
+\href{../doc/Boxplot_function.html}{Vignette: Boxplot_function}
+}
 \keyword{boxplot}
 \keyword{plotting}
 \keyword{visualization}
