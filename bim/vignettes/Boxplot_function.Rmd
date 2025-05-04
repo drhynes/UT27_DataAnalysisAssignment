@@ -17,3 +17,125 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(bim)
 ```
+
+## Windowed Data - DREW
+
+```{r}
+library(tidyverse)
+library(ggprism)
+```
+
+```{r}
+# loading in .csv files for brain and meninges 
+m <- "UT27_Meninges_Output_Data.csv"
+meninges <- read_csv(m, col_names = TRUE)
+b <- "UT27_Brain_Output_Data.csv"
+brain <- read_csv(b,col_names = TRUE)
+
+# selecting the variables we will be working with for brain and meninges 
+brain_select <- brain %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Microglia Counts`, `Neutrophil Counts`, `T-Cell Counts`, `CD8+ T Cell Counts`, `CD4+ T Cell Counts`, `B Cell Counts`)
+
+meninges_select <- meninges %>%
+  select(Date, `Mouse #`,`Cage #`, ZT, Sex, Group, `Neutrophil Cells`, `T Cell Cells`, `CD8 Cells`, `CD4 Cells`, `B Cell Cells`)
+
+# renaming variables for brain and meninges 
+meninges_select <- meninges_select %>%
+  rename(
+    `Meninges Neutrophil_Counts` = `Neutrophil Cells`,
+    `Meninges T Cell Counts` = `T Cell Cells`,
+    `Meninges CD8+ T Cell Counts` = `CD8 Cells`,
+    `Meninges CD4+ T Cell Counts` = `CD4 Cells`,
+    `Meninges B Cell Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain_Microglia_Counts` = `Microglia Counts`,
+    `Brain_Neutrophil_Counts` = `Neutrophil Counts`,
+    `Brain_T_Cell_Counts` = `T-Cell Counts`,
+    `Brain_CD8+_T_Cell_Counts` = `CD8+ T Cell Counts`,
+    `Brain_CD4+_T_Cell_Counts` = `CD4+ T Cell Counts`,
+    `Brain_B_Cell_Counts` = `B Cell Counts`
+  )
+
+#creating a new variable that contains the cage number and the mouse number 
+brain_select$`Mouse #` <- paste(brain_select$`Cage #`, brain_select$`Mouse #`, sep = "-")
+meninges_select$`Mouse #` <- paste(meninges_select$`Cage #`, meninges_select$`Mouse #`, sep = "-")
+
+# combining all the data into one data file 
+combined_data <- brain_select %>%
+  full_join(meninges_select)
+
+# omitting any blank data 
+combined_data <- na.omit(combined_data)
+
+combined_data
+
+```
+
+\
+This is something I did differently from Drew's original windowing\
+I added "\_" to the names to make them easier to work with.
+
+THIS IS GOING TO GIVE AN ERROR IF YOU RUN THE QUARTO - THE FUNCTIONS SHOULD STILL WORK. You might just need to change the names of the variables when you use the function, if that makes sense. They are set up to take strings "text" or character vectors (c("text", "text").
+
+```{r}
+
+
+# renaming variables for brain and meninges 
+meninges_select <- meninges_select %>%
+  rename(
+    `Meninges_Neutrophil_Counts` = `Neutrophil Cells`,
+    `Meninges_T-Cell_Counts` = `T Cell Cells`,
+    `Meninges_CD8+_T-Cell_Counts` = `CD8 Cells`,
+    `Meninges_CD4+_T-Cell_Counts` = `CD4 Cells`,
+    `Meninges_B_Cell_Counts` = `B Cell Cells`
+  )
+
+brain_select <- brain_select %>%
+  rename(
+    `Brain_Microglia_Counts` = `Microglia Counts`,
+    `Brain_Neutrophil_Counts` = `Neutrophil Counts`,
+    `Brain_T_Cell_Counts` = `T-Cell Counts`,
+    `Brain_CD8+_T_Cell_Counts` = `CD8+ T Cell Counts`,
+    `Brain_CD4+_T_Cell_Counts` = `CD4+ T Cell Counts`,
+    `Brain_B_Cell_Counts` = `B Cell Counts`
+  )
+```
+
+## Windowed Data - STEPHEN
+
+This is the extra windowing I did
+
+```{r}
+#I made a new data set that breaks down the group into seperate variables (Genotype, Age, and Age Class)
+# Also ZT needs to be a factor
+combined_data2 <- combined_data |> 
+  mutate(ZT  = as.factor(ZT),
+         Genotype = case_when(grepl("WT", Group, ignore.case = TRUE) ~ "WT", 
+                              grepl("3xTg", Group, ignore.case = TRUE) ~ "3xTg"), 
+         Age = str_extract(Group, "(?<=-)[0-9]+$"), #(?<=-) look after a dash ; [0-9]+ matches the numbers after ; $ to look at the end of the string
+         Age_Class = case_when(
+           Age == 6 ~ "Adult",
+           Age == 9 ~ "Middle Aged", 
+           Age == 18 ~ "Aged")) |>
+  relocate(Genotype, Age,  Age_Class, .after = Group) |>
+  filter(Age_Class %in% c("Adult", "Aged"), 
+         Genotype == "WT")
+```
+
+## BOXPLOT FUNCTION EXAMPLE
+
+should output multiple graphs if you gave it multiple y variables
+
+```{r}
+boxplot_example <- graph_boxplots(
+  data = combined_data2, x_variable = "Age_Class", 
+  y_variables = c("Brain_T_Cell_Counts", "Brain_Microglia_Counts", "Brain_Neutrophil_Counts"), 
+  fill_variable = "ZT", 
+  facet_variable = "Sex", 
+  add_points = TRUE)
+
+boxplot_example
+```
