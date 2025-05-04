@@ -2,7 +2,7 @@
 % Please edit documentation in R/choose_best_model.R
 \name{choose_best_model}
 \alias{choose_best_model}
-\title{Function to choose predictors in model}
+\title{Choose Predictors}
 \usage{
 choose_best_model(data, response_var, predictor_vars)
 }
@@ -14,11 +14,9 @@ choose_best_model(data, response_var, predictor_vars)
 \item{predictor_vars}{Predictor variables.}
 }
 \description{
-Gives original model of data with all predictors, model of data with only best predictors
-}
-\examples{
-choose_best_model <- function(data, response_var, predictor_vars)
+This function returns the full model with all predictors, as well as a reduced model using only the best predictors.
 }
 \seealso{
-\link{vignette("Choose_best_model", package = "bim")}
+\href{../doc/Choose_best_model.html}{Choose Best Model Vignette}
 }
+\keyword{predictors}

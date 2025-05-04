@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_model_table.R
 \name{make_model_table}
 \alias{make_model_table}
-\title{Function to make tables of summary of the model}
+\title{Creates Table Summary}
 \usage{
 make_model_table(model)
 }
@@ -10,11 +10,13 @@ make_model_table(model)
 \item{model}{A statistical model of data.}
 }
 \description{
-Table of Estimate, SE, F, and p for the given model
+This function generates a table of estimates, standard errors (SE), F-values, and p-values for the specified model.
 }
 \examples{
 make_model_table(brain_CD8_model)
 }
 \seealso{
-\link{vignette("Make_model_table", package = "bim")}
+\href{../doc/Make_model_table.html}{Make Model Table Vignette}
 }
+\keyword{statistical}
+\keyword{summary}

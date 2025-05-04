@@ -19,8 +19,7 @@
 #'   outlier_condition = 1.5
 #' )
 #' @seealso 
-#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
-#'   [Package overview and vignettes](bim::bim)
+#'   [Outlier Function Vignette](../doc/Outlier_function.html)
 #' @import dplyr
 #' @export
 

@@ -51,7 +51,7 @@ p <- graph_boxplots(
 )
 }
 \seealso{
-\href{../doc/Boxplot_function.html}{Vignette: Boxplot_function}
+\href{../doc/Boxplot_function.html}{Boxplot Function Vignette}
 }
 \keyword{boxplot}
 \keyword{plotting}

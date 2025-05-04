@@ -26,8 +26,7 @@
 #'   add_points = TRUE
 #' )
 #' @seealso 
-#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
-#'   [Package overview and vignettes](bim::bim)
+#'   [Boxplot Function Vignette](../doc/Boxplot_function.html)
 #' @import ggplot2 stringr
 #' @export
 

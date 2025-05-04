@@ -38,6 +38,6 @@ check_for_outliers(
 )
 }
 \seealso{
-\link{vignette("Outlier_function", package = "bim")}
+\href{../doc/Outlier_function.html}{Outlier Function Vignette}
 }
 \keyword{outliers}

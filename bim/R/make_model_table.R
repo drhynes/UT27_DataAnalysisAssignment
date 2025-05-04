@@ -1,20 +1,15 @@
-#' @keywords internal
-"_PACKAGE"
-
-## usethis namespace: start
-
-#' @title Function to make tables of summary of the model
-#' @description Table of Estimate, SE, F, and p for the given model
+#' @title Creates Table Summary
+#' @name make_model_table
+#' @description
+#' This function generates a table of estimates, standard errors (SE), F-values, and p-values for the specified model.
 #' @param model A statistical model of data.
-#' @export
-#' @seealso 
-#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
-#'   [Package overview and vignettes](bim::bim)
+#' @keywords statistical summary
 #' @examples
 #' make_model_table(brain_CD8_model)
-
-
-#Packages needed: car, dplyr
+#' @seealso 
+#'   [Make Model Table Vignette](../doc/Make_model_table.html)
+#' @import car dplyr
+#' @export
 
 make_model_table <- function(model) {
   # Extract model summary
@@ -41,6 +36,3 @@ make_model_table <- function(model) {
 
   return(model_df)
 }
-
-## usethis namespace: end
-NULL

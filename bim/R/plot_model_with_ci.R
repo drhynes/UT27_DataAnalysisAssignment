@@ -1,22 +1,19 @@
-#' @keywords internal
-"_PACKAGE"
-
-## usethis namespace: start
-
-#' @title Function to make plot of predicted values, split between groups
-#' @description Plot of variable and predictor with CI, split by group
+#' @title Plot Predicted Values
+#' @name plot_model_with_ci
+#' @description
+#' This function creates a plot of predicted values with confidence intervals (CI), displaying the relationship between a predictor and outcome variable, separated by group.
 #' @param model A statistical model of data.
 #' @param dataframe A data frame containing the variables.
 #' @param y_var A string specifying the name of the outcome variable.
 #' @param x_var A string specifying the name of the predictor variable.
 #' @param group_var A string specifying the name of the grouping variable to split lines by.
-#' @export
-#' @seealso 
-#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
-#'   [Package overview and vignettes](bim::bim)
+#' @keywords visualization plotting boxplot
 #' @examples
 #' plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
-#Packages needed: ggplot2, car
+#' @seealso 
+#'   [Plot Model With CI Vignette](../doc/Plot_model_with_ci.html)
+#' @import ggplot2 car
+#' @export
 
 plot_model_with_ci <- function(model, data, y_var, x_var,
                                group_var = NULL,
@@ -70,6 +67,3 @@ plot_model_with_ci <- function(model, data, y_var, x_var,
 
   return(p)
 }
-
-## usethis namespace: end
-NULL

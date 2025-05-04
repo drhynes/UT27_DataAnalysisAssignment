@@ -37,7 +37,7 @@ descriptive_data(
 )
 }
 \seealso{
-\link{vignette("Descriptive_stats_function", package = "bim")}
+\href{../doc/Descriptive_stats_function.html}{Descriptive Stats Function Vignette}
 }
 \keyword{descriptive}
 \keyword{statistics}

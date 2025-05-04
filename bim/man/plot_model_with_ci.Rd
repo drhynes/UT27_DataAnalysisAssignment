@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_model_with_ci.R
 \name{plot_model_with_ci}
 \alias{plot_model_with_ci}
-\title{Function to make plot of predicted values, split between groups}
+\title{Plot Predicted Values}
 \usage{
 plot_model_with_ci(
   model,
@@ -28,11 +28,14 @@ plot_model_with_ci(
 \item{dataframe}{A data frame containing the variables.}
 }
 \description{
-Plot of variable and predictor with CI, split by group
+This function creates a plot of predicted values with confidence intervals (CI), displaying the relationship between a predictor and outcome variable, separated by group.
 }
 \examples{
 plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
 }
 \seealso{
-\link{vignette("Plot_model_with_ci", package = "bim")}
+\href{../doc/Plot_model_with_ci.html}{Plot Model With CI Vignette}
 }
+\keyword{boxplot}
+\keyword{plotting}
+\keyword{visualization}

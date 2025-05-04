@@ -1,21 +1,15 @@
-#' @keywords internal
-"_PACKAGE"
-
-## usethis namespace: start
-
-#' @title Function to choose predictors in model
-#' @description Gives original model of data with all predictors, model of data with only best predictors
+#' @title Choose Predictors
+#' @name choose_best_model
+#' @description
+#' This function returns the full model with all predictors, as well as a reduced model using only the best predictors.
 #' @param data A data frame containing the variables.
 #' @param response_var Variable to model.
 #' @param predictor_vars Predictor variables.
+#' @keywords predictors
+#' @seealso
+#'   [Choose Best Model Vignette](../doc/Choose_best_model.html)
+#' @import MuMIn
 #' @export
-#' @seealso 
-#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
-#'   [Package overview and vignettes](bim::bim)
-#' @examples
-#' choose_best_model <- function(data, response_var, predictor_vars)
-
-#Packages needed: MuMIn
 
 choose_best_model <- function(data, response_var, predictor_vars) {
   options(na.action = "na.fail")  # Required for dredge
@@ -63,6 +57,3 @@ choose_best_model <- function(data, response_var, predictor_vars) {
     top_predictors = predictors_in_all_models
   ))
 }
-
-## usethis namespace: end
-NULL
