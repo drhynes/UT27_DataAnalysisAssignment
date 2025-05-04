@@ -18,7 +18,9 @@
 #'   cell_variables = c("T_Cells", "B_Cells"),
 #'   outlier_condition = 1.5
 #' )
-#' @seealso \link{vignette("Outlier_function", package = "bim")}
+#' @seealso 
+#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
+#'   [Package overview and vignettes](bim::bim)
 #' @import dplyr
 #' @export
 

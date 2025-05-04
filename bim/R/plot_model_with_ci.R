@@ -11,7 +11,9 @@
 #' @param x_var A string specifying the name of the predictor variable.
 #' @param group_var A string specifying the name of the grouping variable to split lines by.
 #' @export
-#' @seealso \link{vignette("Plot_model_with_ci", package = "bim")}
+#' @seealso 
+#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
+#'   [Package overview and vignettes](bim::bim)
 #' @examples
 #' plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
 #Packages needed: ggplot2, car

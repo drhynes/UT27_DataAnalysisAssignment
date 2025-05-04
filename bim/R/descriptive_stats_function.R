@@ -17,7 +17,9 @@
 #'   cell_variables = c("T_Cells", "B_Cells", "Microglia"),
 #'   stats = c("n", "mean", "sd")
 #' )
-#' @seealso \link{vignette("Descriptive_stats_function", package = "bim")}
+#' @seealso 
+#'   [Boxplot Function Vignette](../doc/Boxplot_function.html),  
+#'   [Package overview and vignettes](bim::bim)
 #' @import dplyr
 #' @export
 
