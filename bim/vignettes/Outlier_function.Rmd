@@ -27,10 +27,10 @@ library(ggprism)
 
 ```{r}
 # loading in .csv files for brain and meninges 
-data("UT27_Meninges_Output_Data")
-meninges <- UT27_Meninges_Output_Data
+data("UT27_Meninges_Output_Data", package = "bim")
+data("UT27_Brain_Output_Data", package = "bim")
 
-data("UT27_Brain_Output_Data")
+meninges <- UT27_Meninges_Output_Data
 brain <- UT27_Brain_Output_Data
 
 # selecting the variables we will be working with for brain and meninges 

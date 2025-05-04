@@ -18,6 +18,7 @@
 #'   cell_variables = c("T_Cells", "B_Cells"),
 #'   outlier_condition = 1.5
 #' )
+#' @seealso \link{vignette("Outlier_function", package = "bim")}
 #' @import dplyr
 #' @export
 
@@ -29,13 +30,13 @@ check_for_outliers <- function(data, group_variables, cell_variables, outlier_co
         .cols = all_of(cell_variables), #grabbing all the numerical variables
         .fns = ~ (. < quantile(., 0.25, na.rm = TRUE) - outlier_condition * IQR(., na.rm = TRUE)) | (. > quantile(., 0.75, na.rm = TRUE) + outlier_condition * IQR(., na.rm = TRUE)), # outlier test being applied to each column listed
         .names = "{.col}_outliers")) #creating the new column to show it's an outlier or not
-  
+
   outlier_columns <- paste0(cell_variables, "_outliers") # you need to rewrite columns otherwise it won't let you filter them later
-  
+
   ordered_cell_columns <- as.vector(rbind(cell_variables, outlier_columns)) # this allows for a new outlier_column to be next to the original variable
-  
+
   categorical_variables <- names(select(data, where(~ is.factor(.) || is.character(.)))) # keeps all the categorical variables to know all of the information about these outliers
-  
+
   # this creates a new data frame that shows only the outliers
   outlier_data |> # data frame that was created above
     filter(if_any(all_of(outlier_columns), ~ .)) |> # keeps only rows where outliers are present

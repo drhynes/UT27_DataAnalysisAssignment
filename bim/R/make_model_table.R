@@ -7,7 +7,7 @@
 #' @description Table of Estimate, SE, F, and p for the given model
 #' @param model A statistical model of data.
 #' @export
-#' @seealso \link{vignette("bim")}
+#' @seealso \link{vignette("Make_model_table", package = "bim")}
 #' @examples
 #' make_model_table(brain_CD8_model)
 

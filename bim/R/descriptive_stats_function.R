@@ -17,11 +17,12 @@
 #'   cell_variables = c("T_Cells", "B_Cells", "Microglia"),
 #'   stats = c("n", "mean", "sd")
 #' )
+#' @seealso \link{vignette("Descriptive_stats_function", package = "bim")}
 #' @import dplyr
 #' @export
 
 descriptive_data <- function(data, group_variables, cell_variables, stats = c("n", "median", "q1", "q3", "mean", "sd", "sem")) {
-  
+
   stats_formulas <- list( # ~ is needed to create a temporary function ; .x is just a place holder for the column that is being summarized
     n = ~sum(!is.na(.x)), # counts the number of subjects per group and does not count NAs
     median = ~median(.x, na.rm = TRUE), # calculates the median
@@ -30,9 +31,9 @@ descriptive_data <- function(data, group_variables, cell_variables, stats = c("n
     mean = ~mean(.x, na.rm = TRUE), # calculates the mean
     sd = ~sd(.x, na.rm = TRUE), # calculates the standard deviation
     sem = ~sd(.x, na.rm = TRUE) / sqrt(sum(!is.na(.x)))) # calculates the standard error of the mean
-  
+
   selected_formulas <- stats_formulas[stats] # this helps apply each of the stats that were selected or all of them if no selection was made below
-  
+
   data |> # data table
     group_by(across(all_of(group_variables))) |> # first groups by categorical vaeriables; across() - applies to all columns listed ; all_of() - turns the character string list into column names
     summarise(across( #across() - apply to all columns listed
