@@ -37,7 +37,7 @@ descriptive_data <- function(data, group_variables, cell_variables, stats = c("n
   selected_formulas <- stats_formulas[stats] # this helps apply each of the stats that were selected or all of them if no selection was made below
 
   data |> # data table
-    group_by(across(all_of(group_variables))) |> # first groups by categorical vaeriables; across() - applies to all columns listed ; all_of() - turns the character string list into column names
+    group_by(across(all_of(group_variables))) |> # first groups by categorical variables; across() - applies to all columns listed ; all_of() - turns the character string list into column names
     summarise(across( #across() - apply to all columns listed
       all_of(cell_variables), #all_of() - turns the character string list into the column names
       .fns = selected_formulas, # Applies the selected list of formulas
