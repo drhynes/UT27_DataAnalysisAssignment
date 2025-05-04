@@ -18,13 +18,17 @@ knitr::opts_chunk$set(
 library(bim)
 ```
 
-## Read in dataframes and data wrangling
+## PRELIMINARIES 
 
 ```{r}
 library(readr)
 library(dplyr)
 library(skimr)
+```
 
+## DATA WRANGLING 
+
+```{r}
 data("UT27_Meninges_Output_Data")
 meninges <- UT27_Meninges_Output_Data
 
@@ -67,7 +71,9 @@ combined_data <- combined_data %>%
   filter(!(Group %in% c("2-WT-9", "3-3xTg-9", "5-3xTg-18")))
 ```
 
-Coefficient Heatmap
+# COEFFICIENT HEATMAP
+
+Explanation ...
 
 ```{r}
 library(corrplot)
@@ -75,7 +81,9 @@ numeric_data <- combined_data[, sapply(combined_data, is.numeric)]
 corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
 ```
 
-Ex. using this model
+## CHOOSE BEST MODEL EXAMPLE
+
+Balh aldhan Ex. using this model
 
 ```{r}
 library(MuMIn)
