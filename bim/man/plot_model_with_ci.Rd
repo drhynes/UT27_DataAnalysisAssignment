@@ -31,7 +31,9 @@ plot_model_with_ci(
 This function creates a plot of predicted values with confidence intervals (CI), displaying the relationship between a predictor and outcome variable, separated by group.
 }
 \examples{
+\dontrun{
 plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
+}
 }
 \seealso{
 \href{../doc/Plot_model_with_ci.html}{Plot Model With CI Vignette}

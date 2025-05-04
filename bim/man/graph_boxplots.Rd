@@ -41,6 +41,7 @@ This function can be used to create a multiple boxplots for one or more numerica
 This function can create boxplots with the option to color fill, include raw data points, and facet by any variable.
 }
 \examples{
+\dontrun{
 p <- graph_boxplots(
   data = data_frame,
   x_variable = "Genotype",
@@ -48,7 +49,7 @@ p <- graph_boxplots(
   fill_variable = "Time_of_day",
   facet_variable = "Sex",
   add_points = TRUE
-)
+)}
 }
 \seealso{
 \href{../doc/Boxplot_function.html}{Boxplot Function Vignette}

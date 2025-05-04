@@ -13,7 +13,9 @@ make_model_table(model)
 This function generates a table of estimates, standard errors (SE), F-values, and p-values for the specified model.
 }
 \examples{
+\dontrun{
 make_model_table(brain_CD8_model)
+}
 }
 \seealso{
 \href{../doc/Make_model_table.html}{Make Model Table Vignette}

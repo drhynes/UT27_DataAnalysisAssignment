@@ -29,12 +29,13 @@ This function can be used to calculate different types of descriptive statistics
 These descriptive statistics are calculated for any group and for any numerical variables of your choosing.
 }
 \examples{
+\dontrun{
 descriptive_data(
   data = data_frame,
   group_variables = c("Sex", "Genotype"),
   cell_variables = c("T_Cells", "B_Cells", "Microglia"),
   stats = c("n", "mean", "sd")
-)
+)}
 }
 \seealso{
 \href{../doc/Descriptive_stats_function.html}{Descriptive Stats Function Vignette}

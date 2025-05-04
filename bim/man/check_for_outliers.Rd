@@ -30,12 +30,13 @@ It finds outliers that fall below the first quartile or above the third quartile
 The method is based on the standard Tukey outlier rule, though the multiplier can be changed to be more conservative or more lenient (e.g., 1, 1.5, 2, 2.5, or 3)
 }
 \examples{
+\dontrun{
 check_for_outliers(
   data = my_data,
   group_variables = c("Sex", "Genotype"),
   cell_variables = c("T_Cells", "B_Cells"),
   outlier_condition = 1.5
-)
+)}
 }
 \seealso{
 \href{../doc/Outlier_function.html}{Outlier Function Vignette}
