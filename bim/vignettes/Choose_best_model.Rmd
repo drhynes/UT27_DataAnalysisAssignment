@@ -68,6 +68,7 @@ combined_data <- combined_data %>%
 ```
 
 Coefficient Heatmap
+DESCRIPTION: This will generate a heatmap that gives an overview of which cell types correlate with which cell types. Ones that positively correlate will be represented by a blue box, negatively correlate by a red box, and don't significantly correlate by a grey box. In this example, we can see that all T cell and CD8+ T cell counts correlate with each other, even between tissues. This should inform which are the best predictors to use in a model.
 
 ```{r}
 library(corrplot)
@@ -76,6 +77,7 @@ corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
 ```
 
 Ex. using this model
+DESCRIPTION: This will do a linear model of one variable, using every variable listed as a predictor and output that as the "full_model". It will the run AICc and select variables that are used as predictors in every AICc model, and only use those to re-model the data, outputting that as "reduced_model"
 
 ```{r}
 library(MuMIn)
