@@ -1,0 +1,19 @@
+---
+title: "Boxplot_function"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Boxplot_function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bim)
+```

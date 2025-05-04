@@ -1,0 +1,19 @@
+---
+title: "Plot_model_with_ci"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Plot_model_with_ci}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bim)
+```
