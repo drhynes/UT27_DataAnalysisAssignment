@@ -72,6 +72,7 @@ combined_data <- combined_data %>%
 ```
 
 # COEFFICIENT HEATMAP
+DESCRIPTION: This will generate a heatmap that gives an overview of which cell types correlate with which cell types. Ones that positively correlate will be represented by a blue box, negatively correlate by a red box, and don't significantly correlate by a grey box. In this example, we can see that all T cell and CD8+ T cell counts correlate with each other, even between tissues. This should inform which are the best predictors to use in a model.
 
 ```{r}
 library(corrplot)
@@ -82,6 +83,7 @@ corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
 ## PLOT MODEL WITH CI EXAMPLE
 
 Ex. Use this:
+DESCRIPTION: This function takes several inputs: model (the linear model used for this data), data (the dataframe that model is based off of), y_var (the variable that you are modeling), x_var (the predictive variable of interest), and group_var (The column in the dataframe that you want to compare between groups). This allows us to plot twoi cell types against each other and compare how they interact in different groups.
 
 ```{r}
 library(ggplot2)
@@ -94,4 +96,5 @@ bCD8xmCD8_plot <- plot_model_with_ci(
   group_var = "Group"
 )
 
+print(bCD8xmCD8_plot)
 ```
