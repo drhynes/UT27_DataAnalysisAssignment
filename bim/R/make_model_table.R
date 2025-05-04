@@ -5,8 +5,10 @@
 #' @param model A statistical model of data.
 #' @keywords statistical summary
 #' @examples
+#' \dontrun{
 #' make_model_table(brain_CD8_model)
-#' @seealso 
+#' }
+#' @seealso
 #'   [Make Model Table Vignette](../doc/Make_model_table.html)
 #' @import car dplyr
 #' @export

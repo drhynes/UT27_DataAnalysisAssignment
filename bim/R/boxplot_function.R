@@ -17,6 +17,7 @@
 #' @return One or more boxplots will be made for each of y-variables that were given.
 #' @keywords visualization plotting boxplot
 #' @examples
+#' \dontrun{
 #' p <- graph_boxplots(
 #'   data = data_frame,
 #'   x_variable = "Genotype",
@@ -24,8 +25,8 @@
 #'   fill_variable = "Time_of_day",
 #'   facet_variable = "Sex",
 #'   add_points = TRUE
-#' )
-#' @seealso 
+#' )}
+#' @seealso
 #'   [Boxplot Function Vignette](../doc/Boxplot_function.html)
 #' @import ggplot2 stringr
 #' @export

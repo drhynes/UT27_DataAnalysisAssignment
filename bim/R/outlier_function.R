@@ -12,13 +12,14 @@
 #' The data frame also only contains the only rows where outliers were detected.
 #' @keywords outliers
 #' @examples
+#' \dontrun{
 #' check_for_outliers(
 #'   data = my_data,
 #'   group_variables = c("Sex", "Genotype"),
 #'   cell_variables = c("T_Cells", "B_Cells"),
 #'   outlier_condition = 1.5
-#' )
-#' @seealso 
+#' )}
+#' @seealso
 #'   [Outlier Function Vignette](../doc/Outlier_function.html)
 #' @import dplyr
 #' @export

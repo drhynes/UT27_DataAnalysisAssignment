@@ -11,12 +11,13 @@
 #' Each column of descriptive statistics will contain the name of the numerical variable and have the name of the statistic (e.g., T_Cells_mean ).
 #' @keywords descriptive statistics summary
 #' @examples
+#' \dontrun{
 #' descriptive_data(
 #'   data = data_frame,
 #'   group_variables = c("Sex", "Genotype"),
 #'   cell_variables = c("T_Cells", "B_Cells", "Microglia"),
 #'   stats = c("n", "mean", "sd")
-#' )
+#' )}
 #' @seealso
 #'   [Descriptive Stats Function Vignette](../doc/Descriptive_stats_function.html)
 #' @import dplyr

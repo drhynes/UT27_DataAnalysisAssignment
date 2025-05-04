@@ -9,8 +9,10 @@
 #' @param group_var A string specifying the name of the grouping variable to split lines by.
 #' @keywords visualization plotting boxplot
 #' @examples
+#' \dontrun{
 #' plot_model_with_ci(model = brain_CD8_model_reduced, data = combined_data, y_var = "Brain CD8+ T Cell Counts", x_var = "Meninges CD8+ T Cell Counts", group_var = "Group")
-#' @seealso 
+#' }
+#' @seealso
 #'   [Plot Model With CI Vignette](../doc/Plot_model_with_ci.html)
 #' @import ggplot2 car
 #' @export
