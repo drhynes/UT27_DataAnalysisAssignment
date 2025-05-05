@@ -19,7 +19,6 @@ library(bim)
 ```
 
 ## PRELIMINARIES 
-
 ```{r}
 library(readr)
 library(dplyr)
@@ -27,7 +26,6 @@ library(skimr)
 ```
 
 ## DATA WRANGLING 
-
 ```{r}
 data("UT27_Meninges_Output_Data")
 meninges <- UT27_Meninges_Output_Data
@@ -72,7 +70,9 @@ combined_data <- combined_data %>%
 ```
 
 # COEFFICIENT HEATMAP
-DESCRIPTION: This will generate a heatmap that gives an overview of which cell types correlate with which cell types. Ones that positively correlate will be represented by a blue box, negatively correlate by a red box, and don't significantly correlate by a grey box. In this example, we can see that all T cell and CD8+ T cell counts correlate with each other, even between tissues. This should inform which are the best predictors to use in a model.
+This will generate a heatmap that gives an overview of which cell types correlate with which cell types. Ones that positively correlate will be represented by a blue box, negatively correlate by a red box, and don't significantly correlate by a grey box. In this example, we can see that all T cell and CD8+ T cell counts correlate with each other, even between tissues. This should inform which are the best predictors to use in a model.
+
+This heatmap validates our variable choices by highlighting meaningful correlations between cell types, helping us avoid redundancy and multicollinearity in downstream modeling. It ensures our analysis focuses on biologically relevant relationships worth exploring further.
 
 ```{r}
 library(corrplot)
@@ -81,9 +81,7 @@ corrplot::corrplot(cor(numeric_data, use = "complete.obs"), method = "color")
 ```
 
 ## MAKE MODEL TABLE EXAMPLE
-
-Ex Use make model table function
-DESCRIPTION: This function takes an input of a linear model and generates a table showing the Estimates, SE, p value, and F score for each variable used in that model, allowing you to see how good of a predictor each variable is. This was done below for both the full and reduced model from the choose_best_model function.
+This function takes an input of a linear model and generates a table showing the Estimates, SE, p value, and F score for each variable used in that model, allowing you to see how good of a predictor each variable is. This was done below for both the full and reduced model from the choose_best_model function.
 
 ```{r}
 library(car)

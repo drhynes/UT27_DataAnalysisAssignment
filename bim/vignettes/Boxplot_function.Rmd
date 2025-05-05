@@ -18,14 +18,14 @@ knitr::opts_chunk$set(
 library(bim)
 ```
 
-## Preliminaries 
-
+## PRELIMINARIES 
 Loading packages need for data wrangling. 
 
 ```{r}
 library(tidyverse)
 ```
 
+## DATA WRANGLING
 ```{r}
 # Loading in .csv files for brain and meninges cell count data
 data("UT27_Meninges_Output_Data", package = "bim")
